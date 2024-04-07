@@ -1,39 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiger_app_chat/components/%E0%B8%B4button.dart';
-import 'package:tiger_app_chat/page/register_page.dart';
+import 'package:tiger_app_chat/page/login_page.dart';
 import 'package:tiger_app_chat/services/auth/auth_service.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
+  late TextEditingController _confirmPasswordController;
 
   @override
   void initState() {
     super.initState();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
   }
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  Future<void> signIn() async {
-    final authService = Provider.of<AuthService>(context, listen: false);
+  Future<void> signUp() async {
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Password does not match!"),
+        ),
+      );
+      return; // Exit signUp function if passwords do not match
+    }
 
+    final authService = Provider.of<AuthService>(context, listen: false);
     try {
-      await authService.signInWithEmailAndPassword(
+      await authService.signUpWithEmailandPassword(
         _emailController.text,
         _passwordController.text,
       );
@@ -50,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: Text('Register'),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -71,29 +82,45 @@ class _LoginPageState extends State<LoginPage> {
               ),
               obscureText: true,
             ),
-            MyButton(
-              onTap: signIn,
-              text: "SignIn",
+            SizedBox(height: 16.0),
+            TextFormField(
+              controller: _confirmPasswordController,
+              decoration: InputDecoration(
+                labelText: 'Confirm Password',
+              ),
+              obscureText: true,
+              autovalidateMode:
+                  AutovalidateMode.onUserInteraction, // Add autovalidateMode
+              validator: (value) {
+                if (value != _passwordController.text) {
+                  return 'Passwords do not match';
+                }
+                return null;
+              }, // Add validator
             ),
-            SizedBox(height: 16.0), // Add spacing
+            MyButton(
+              onTap: signUp,
+              text: "Sign Up",
+            ),
+            SizedBox(height: 16.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Not a member?'),
+                Text('Already a member?'),
                 SizedBox(width: 4),
                 TextButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => RegisterPage()),
+                      MaterialPageRoute(builder: (context) => LoginPage()),
                     );
                   },
                   child: Text(
-                    'Register now',
+                    'Login now',
                     style: TextStyle(color: Colors.blue),
                   ),
                 ),
-              ],
+              ], // Add this closing bracket
             ),
           ],
         ),
