@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tiger_app_chat/services/auth/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -25,17 +27,21 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _signIn() {
-    // Perform sign-in logic here
-    String email = _emailController.text;
-    String password = _passwordController.text;
+  Future<void> signIn() async {
+    final authService = Provider.of<AuthService>(context, listen: false);
 
-    // Example of printing email and password
-    print('Email/Username: $email');
-    print('Password: $password');
-
-    // You can replace the print statements with your authentication logic
-    // For example, you can call an authentication service to sign in the user
+    try {
+      await authService.signInWithEmailAndPassword(
+        _emailController.text,
+        _passwordController.text,
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    }
   }
 
   @override
@@ -63,10 +69,9 @@ class _LoginPageState extends State<LoginPage> {
               ),
               obscureText: true,
             ),
-            SizedBox(height: 32.0),
             ElevatedButton(
-              onPressed: _signIn,
-              child: Text('Sign In'),
+              onPressed: signIn,
+              child: Text("Login"),
             ),
           ],
         ),

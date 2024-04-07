@@ -1,32 +1,13 @@
 {
   "project_info": {
-    "project_number": "236087521617",
-    "project_id": "chatapp-bdcb3",
-    "storage_bucket": "chatapp-bdcb3.appspot.com"
+    "project_number": "51772174380",
+    "project_id": "appchat2-f04d6",
+    "storage_bucket": "appchat2-f04d6.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:236087521617:android:2a432c74c4275a5290e370",
-        "android_client_info": {
-          "package_name": "cm.example.tiger_app_chat"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDljGLTT943ksten9VzofKlKWvibUuBN3M"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:236087521617:android:f5d3b25452a1d74190e370",
+        "mobilesdk_app_id": "1:51772174380:android:34eb4701f329fdc526a189",
         "android_client_info": {
           "package_name": "com.example.tiger_app_chat"
         }
@@ -34,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDljGLTT943ksten9VzofKlKWvibUuBN3M"
+          "current_key": "AIzaSyCVWPgYoaZR-I3yJ1Ghz8XA7GugeQyxhXs"
         }
       ],
       "services": {
