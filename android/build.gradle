@@ -7,6 +7,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.0' // Replace 4.2.0 with your actual Android Gradle Plugin version
         classpath 'com.google.gms:google-services:4.4.1' // Add Google Services plugin dependency
+        classpath 'com.google.firebase:firebase-database:11.8.0'
         // Other dependencies...
     }
 }

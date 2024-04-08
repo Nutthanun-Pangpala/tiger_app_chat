@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tiger_app_chat/model/massage.dart';
+import 'package:tiger_app_chat/model/message.dart'; // Corrected import
 
 class ChatService extends ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> sendMessage(String receiverId, String message) async {
     final String currentUserId = _firebaseAuth.currentUser!.uid;
@@ -13,20 +13,21 @@ class ChatService extends ChangeNotifier {
     final Timestamp timestamp = Timestamp.now();
 
     Message newMessage = Message(
-        senderId: currentUserId,
-        senderEmail: currentUserEmail,
-        receiverId: receiverId,
-        timestamp: timestamp,
-        message: message);
+      senderId: currentUserId,
+      senderEmail: currentUserEmail,
+      receiverId: receiverId,
+      timestamp: timestamp,
+      message: message,
+    );
 
     List<String> ids = [currentUserId, receiverId];
     ids.sort();
     String chatRoomId = ids.join("_");
 
-    await _firebaseFirestore
+    await _firestore
         .collection('chat_rooms')
         .doc(chatRoomId)
-        .collection('message')
+        .collection('messages') // Corrected collection name
         .add(newMessage.toMap());
   }
 
@@ -35,11 +36,11 @@ class ChatService extends ChangeNotifier {
     ids.sort();
     String chatRoomId = ids.join("_");
 
-    return _firebaseFirestore
-        .collection('Chatroom')
+    return _firestore
+        .collection('chat_rooms')
         .doc(chatRoomId)
         .collection('messages')
-        .orderBy('timerstamp', descending: false)
+        .orderBy('timestamp', descending: false) // Corrected field name
         .snapshots();
   }
 }
