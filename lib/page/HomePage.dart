@@ -1,12 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:tiger_app_chat/page/Chat_Page.dart';
-import 'package:tiger_app_chat/services/auth/auth_service.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -14,23 +12,56 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  String? _username; // Declare _username here
 
-  void signOut() {
-    final authService = Provider.of<AuthService>(context, listen: false);
-    authService.signOut();
+  @override
+  void initState() {
+    super.initState();
+    _fetchUsername(); // Call _fetchUsername() when widget initializes
+  }
+
+  Future<void> _fetchUsername() async {
+    if (_auth.currentUser != null) {
+      final uid = _auth.currentUser!.uid;
+      final userData =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      setState(() {
+        _username = userData['username'];
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Retrieve current user
+    final User? user = _auth.currentUser;
+
+    // Determine title based on user's email
+    String title = _username ?? "";
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
-        actions: [
-          IconButton(
-            onPressed: signOut,
-            icon: const Icon(Icons.logout),
-          )
-        ],
+        centerTitle: false, // Keep title alignment to the left
+        title: Row(
+          // Wrap title with Row
+          children: [
+            SizedBox(width: 8), // Add space between leading icon and title
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        leading: IconButton(
+          onPressed: () {
+            // Sign out
+            _auth.signOut();
+          },
+          icon: const Icon(Icons.arrow_back_ios_new),
+        ),
       ),
       body: _buildUserList(),
     );
@@ -41,15 +72,17 @@ class _HomePageState extends State<HomePage> {
       stream: FirebaseFirestore.instance.collection('users').snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return const Text('Error');
+          return Text('Error: ${snapshot.error}');
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('Loading...');
+          return Text('Loading...');
         }
-        return ListView(
-          children: snapshot.data!.docs
-              .map<Widget>((doc) => _buildUserListItem(doc))
-              .toList(),
+        return ListView.builder(
+          itemCount: snapshot.data!.docs.length,
+          itemBuilder: (context, index) {
+            final document = snapshot.data!.docs[index];
+            return _buildUserListItem(document);
+          },
         );
       },
     );
@@ -60,7 +93,18 @@ class _HomePageState extends State<HomePage> {
 
     if (_auth.currentUser!.email != data['email']) {
       return ListTile(
-        title: Text(data['email']),
+        leading: CircleAvatar(
+          // You can set the user's profile image here
+          // Example: backgroundImage: NetworkImage(data['profileImageUrl']),
+          child: Text(
+              data['email'][0]), // Display first letter of email as fallback
+        ),
+        title: Text(
+          data['email'],
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(
+            'ofline'), // You can customize the status based on user's activity
         onTap: () {
           Navigator.push(
             context,

@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiger_app_chat/components/%E0%B8%B4button.dart';
+import 'package:tiger_app_chat/page/HomePage.dart'; // Import the HomePage
 import 'package:tiger_app_chat/page/register_page.dart';
 import 'package:tiger_app_chat/services/auth/auth_service.dart';
 
@@ -12,30 +14,58 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  late TextEditingController _emailController;
+  late TextEditingController _usernameController;
   late TextEditingController _passwordController;
+  late FirebaseFirestore _firestore;
 
   @override
   void initState() {
     super.initState();
-    _emailController = TextEditingController();
+    _usernameController = TextEditingController();
     _passwordController = TextEditingController();
+    _firestore = FirebaseFirestore.instance;
   }
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
   Future<void> signIn() async {
     final authService = Provider.of<AuthService>(context, listen: false);
+    final username = _usernameController.text;
+    final password = _passwordController.text;
 
     try {
+      // Query Firestore to check if the entered username exists
+      final snapshot = await _firestore
+          .collection('users')
+          .where('username', isEqualTo: username)
+          .get();
+
+      if (snapshot.docs.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Username not found'),
+          ),
+        );
+        return;
+      }
+
+      // Sign in using email and password
       await authService.signInWithEmailAndPassword(
-        _emailController.text,
-        _passwordController.text,
+        snapshot
+            .docs.first['email'], // Use the email associated with the username
+        password,
+      );
+
+      // Navigate to the Home page after successful login
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => HomePage()), // Navigate to HomePage
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -58,9 +88,9 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextFormField(
-              controller: _emailController,
+              controller: _usernameController,
               decoration: InputDecoration(
-                labelText: 'Email/Username',
+                labelText: 'Username',
               ),
             ),
             SizedBox(height: 16.0),
@@ -83,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(width: 4),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => RegisterPage()),
                     );
