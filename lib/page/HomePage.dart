@@ -33,34 +33,34 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Retrieve current user
     final User? user = _auth.currentUser;
-
-    // Determine title based on user's email
     String title = _username ?? "";
-
     return Scaffold(
       appBar: AppBar(
-        centerTitle: false, // Keep title alignment to the left
+        backgroundColor: Colors.black, // Change the color of AppBar to black
+        centerTitle: false,
         title: Row(
-          // Wrap title with Row
+          mainAxisAlignment:
+              MainAxisAlignment.spaceBetween, // Align widgets in AppBar
           children: [
-            SizedBox(width: 8), // Add space between leading icon and title
+            SizedBox(width: 8),
             Text(
               title,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
             ),
+            IconButton(
+              onPressed: () {
+                _auth.signOut();
+              },
+              icon: const Icon(Icons.account_circle),
+              color: Colors.white,
+              iconSize: 40,
+            ),
           ],
-        ),
-        leading: IconButton(
-          onPressed: () {
-            // Sign out
-            _auth.signOut();
-          },
-          icon: const Icon(Icons.arrow_back_ios_new),
         ),
       ),
       body: _buildUserList(),
@@ -75,7 +75,8 @@ class _HomePageState extends State<HomePage> {
           return Text('Error: ${snapshot.error}');
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text('Loading...');
+          return Center(
+              child: CircularProgressIndicator()); // Add loading indicator
         }
         return ListView.builder(
           itemCount: snapshot.data!.docs.length,
@@ -94,24 +95,29 @@ class _HomePageState extends State<HomePage> {
     if (_auth.currentUser!.email != data['email']) {
       return ListTile(
         leading: CircleAvatar(
-          // You can set the user's profile image here
-          // Example: backgroundImage: NetworkImage(data['profileImageUrl']),
           child: Text(
-              data['email'][0]), // Display first letter of email as fallback
+            data['email'][0], // Display first letter of email as fallback
+          ),
         ),
         title: Text(
           data['email'],
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
-            'ofline'), // You can customize the status based on user's activity
+            'Offline'), // You can customize the status based on user's activity
+        trailing: IconButton(
+          icon: Icon(Icons.more_vert), // Add the ellipsis icon
+          onPressed: () {
+            // Handle onTap event for the ellipsis icon
+          },
+        ),
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ChatPage(
-                receiverUserEmail: data['email'],
-                receiverUserID: data['uid'],
+                receiverUserName: data['username'], // Pass username to ChatPage
+                receiverUserID: data['uid'], receiverUserEmail: '',
               ),
             ),
           );

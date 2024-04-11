@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiger_app_chat/components/%E0%B8%B4button.dart';
-import 'package:tiger_app_chat/page/HomePage.dart'; // Import the HomePage
+import 'package:tiger_app_chat/page/HomePage.dart';
 import 'package:tiger_app_chat/page/register_page.dart';
 import 'package:tiger_app_chat/services/auth/auth_service.dart';
 

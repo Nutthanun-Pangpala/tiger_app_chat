@@ -1,11 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tiger_app_chat/page/HomePage.dart'; // Adjust the import path
-import 'package:tiger_app_chat/page/login_page.dart'; // Adjust the import path
+import 'package:tiger_app_chat/page/HomePage.dart';
+import 'package:tiger_app_chat/page/login_page.dart';
 
 class AuthGate extends StatelessWidget {
-  const AuthGate({Key? key})
-      : super(key: key); // Correctly initialize super constructor
+  const AuthGate({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

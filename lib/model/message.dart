@@ -13,6 +13,7 @@ class Message {
     required this.receiverId,
     required this.timestamp, // Update type to Timestamp
     required this.message,
+    required String receiverUsername,
   });
 
   // Convert Message to Map for Firestore

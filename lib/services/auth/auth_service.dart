@@ -3,8 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AuthService extends ChangeNotifier {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
+  final FirebaseAuth _firebaseAuth;
+  final FirebaseFirestore _fireStore;
+
+  AuthService({FirebaseAuth? firebaseAuth, FirebaseFirestore? fireStore})
+      : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+        _fireStore = fireStore ?? FirebaseFirestore.instance;
 
   Future<UserCredential> signInWithEmailAndPassword(
       String email, String password) async {
@@ -33,7 +37,7 @@ class AuthService extends ChangeNotifier {
       await _fireStore.collection('users').doc(userCredential.user!.uid).set({
         'uid': userCredential.user!.uid,
         'email': email,
-        'username': username, // Adding username field
+        'username': username,
       });
 
       return userCredential;
@@ -43,6 +47,7 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<void> signOut() async {
-    return await FirebaseAuth.instance.signOut();
+    await _firebaseAuth.signOut();
+    notifyListeners();
   }
 }
