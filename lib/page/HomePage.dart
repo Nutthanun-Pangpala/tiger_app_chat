@@ -37,11 +37,11 @@ class _HomePageState extends State<HomePage> {
     String title = _username ?? "";
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black, // Change the color of AppBar to black
+        backgroundColor: Colors.black, // เปลี่ยนสีของ AppBar เป็นสีดำ
         centerTitle: false,
         title: Row(
           mainAxisAlignment:
-              MainAxisAlignment.spaceBetween, // Align widgets in AppBar
+              MainAxisAlignment.spaceBetween, // จัดตำแหน่งของ Widget ใน AppBar
           children: [
             SizedBox(width: 8),
             Text(
@@ -75,8 +75,7 @@ class _HomePageState extends State<HomePage> {
           return Text('Error: ${snapshot.error}');
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-              child: CircularProgressIndicator()); // Add loading indicator
+          return Text('Loading...');
         }
         return ListView.builder(
           itemCount: snapshot.data!.docs.length,
@@ -100,7 +99,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         title: Text(
-          data['email'],
+          data['username'],
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
@@ -116,8 +115,9 @@ class _HomePageState extends State<HomePage> {
             context,
             MaterialPageRoute(
               builder: (context) => ChatPage(
-                receiverUserName: data['username'], // Pass username to ChatPage
-                receiverUserID: data['uid'], receiverUserEmail: '',
+                receiverUserEmail: data['email'],
+                receiverUserID: data['uid'],
+                receiverUserName: null,
               ),
             ),
           );

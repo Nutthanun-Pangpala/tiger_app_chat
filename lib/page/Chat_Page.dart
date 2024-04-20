@@ -10,7 +10,8 @@ class ChatPage extends StatefulWidget {
   const ChatPage({
     Key? key,
     required this.receiverUserEmail,
-    required this.receiverUserID, required receiverUserName,
+    required this.receiverUserID,
+    required receiverUserName,
   }) : super(key: key); // Correctly initialized super constructor
 
   @override

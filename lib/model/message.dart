@@ -5,15 +5,18 @@ class Message {
   final String senderEmail;
   final String receiverId;
   final String message;
-  final Timestamp timestamp; // Update type to Timestamp
+  final Timestamp timestamp; // Updated type to Timestamp
+  final String senderUsername;
+  final String receiverUsername;
 
   Message({
     required this.senderId,
     required this.senderEmail,
     required this.receiverId,
-    required this.timestamp, // Update type to Timestamp
+    required this.timestamp, // Updated type to Timestamp
     required this.message,
-    required String receiverUsername,
+    required this.senderUsername,
+    required this.receiverUsername, // Added missing 'this' keyword
   });
 
   // Convert Message to Map for Firestore
@@ -23,7 +26,9 @@ class Message {
       'senderEmail': senderEmail,
       'receiverId': receiverId,
       'message': message,
-      'timestamp': timestamp, // Update type to Timestamp
+      'timestamp': timestamp,
+      'senderUsername': senderUsername,
+      'receiverUsername': receiverUsername, // Added missing field
     };
   }
 }
